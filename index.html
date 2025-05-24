@@ -33,7 +33,7 @@
       font-weight: 600;
       color: #444;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -72,6 +72,12 @@
     <label for="name">Name</label>
     <input type="text" id="name" placeholder="Enter your name">
 
+    <label for="project">Project Type</label>
+    <select id="project">
+      <option value="banner">Banner</option>
+      <option value="vinyl">Vinyl</option>
+    </select>
+
     <label for="banner">Banner</label>
     <input type="text" id="banner" placeholder="Banner name or ID">
 
@@ -90,6 +96,7 @@
     function calculatePrice() {
       const width = parseFloat(document.getElementById('width').value);
       const height = parseFloat(document.getElementById('height').value);
+      const projectType = document.getElementById('project').value;
 
       if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
         document.getElementById('result').textContent = 'Please enter valid width and height.';
@@ -99,12 +106,20 @@
       const sqft = (width * height) / 144;
       let price = 0;
 
-      if (sqft < 5) {
-        price = 35;
-      } else if (sqft <= 10) {
-        price = sqft * 5;
-      } else {
-        price = sqft * 5;
+      if (projectType === 'banner') {
+        if (sqft < 5) {
+          price = 35;
+        } else {
+          price = sqft * 5;
+        }
+      } else if (projectType === 'vinyl') {
+        if (sqft < 3) {
+          price = sqft * 10;
+        } else if (sqft <= 8) {
+          price = sqft * 8;
+        } else {
+          price = sqft * 6;
+        }
       }
 
       document.getElementById('result').textContent = `Estimated Price: $${price.toFixed(2)} (Area: ${sqft.toFixed(2)} sqft)`;
