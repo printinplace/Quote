@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f7f9fc;
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,70 +16,83 @@
     }
     .container {
       background-color: #ffffff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      max-width: 420px;
       width: 100%;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      margin-bottom: 20px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
     }
     h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #333;
+      margin-bottom: 30px;
+      color: #222;
+      font-size: 26px;
     }
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 20px;
       font-weight: 600;
-      color: #444;
+      color: #333;
+      font-size: 15px;
+      text-align: left;
     }
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 12px;
+      margin-top: 8px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 10px;
       box-sizing: border-box;
-      font-size: 15px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: #007BFF;
+      outline: none;
     }
     button {
-      margin-top: 25px;
-      padding: 12px;
+      margin-top: 30px;
+      padding: 14px;
       width: 100%;
       background-color: #007BFF;
       color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 10px;
+      font-size: 17px;
       cursor: pointer;
+      font-weight: 600;
       transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #0056b3;
     }
     #result {
-      margin-top: 25px;
-      font-size: 18px;
+      margin-top: 30px;
+      font-size: 20px;
       font-weight: 500;
-      text-align: center;
-      color: #222;
+      color: #1a1a1a;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <img src="./logo.png" alt="Logo" class="logo">
     <h2>Price Calculator</h2>
-    <label for="name">Name</label>
-    <input type="text" id="name" placeholder="Enter your name">
 
     <label for="project">Project Type</label>
     <select id="project">
       <option value="banner">Banner</option>
       <option value="vinyl">Vinyl</option>
     </select>
-
-    <label for="banner">Banner</label>
-    <input type="text" id="banner" placeholder="Banner name or ID">
 
     <label for="width">Width (inches)</label>
     <input type="number" id="width" step="0.01" placeholder="Enter width in inches">
