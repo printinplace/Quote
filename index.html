@@ -89,10 +89,26 @@
     <h2>Price Calculator</h2>
 
     <label for="project">Project Type</label>
-    <select id="project">
+    <select id="project" onchange="toggleGrommetOptions()">
       <option value="banner">Banner</option>
       <option value="vinyl">Vinyl</option>
     </select>
+
+    <div id="grommet-section" style="display:none">
+      <label for="grommet-needed">Need Grommet?</label>
+      <select id="grommet-needed" onchange="toggleGrommetDetails()">
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
+      </select>
+
+      <div id="grommet-options" style="display:none">
+        <label for="grommet-detail">Grommet Type</label>
+        <select id="grommet-detail">
+          <option value="four">All four corners (+$5)</option>
+          <option value="around">Every 2-3 Feet all Around (+$7)</option>
+        </select>
+      </div>
+    </div>
 
     <label for="width">Width (inches)</label>
     <input type="number" id="width" step="0.01" placeholder="Enter width in inches">
@@ -106,10 +122,22 @@
   </div>
 
   <script>
+    function toggleGrommetOptions() {
+      const project = document.getElementById('project').value;
+      document.getElementById('grommet-section').style.display = project === 'banner' ? 'block' : 'none';
+    }
+
+    function toggleGrommetDetails() {
+      const grommetNeeded = document.getElementById('grommet-needed').value;
+      document.getElementById('grommet-options').style.display = grommetNeeded === 'yes' ? 'block' : 'none';
+    }
+
     function calculatePrice() {
       const width = parseFloat(document.getElementById('width').value);
       const height = parseFloat(document.getElementById('height').value);
       const projectType = document.getElementById('project').value;
+      const grommetNeeded = document.getElementById('grommet-needed')?.value || 'no';
+      const grommetType = document.getElementById('grommet-detail')?.value || '';
 
       if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
         document.getElementById('result').textContent = 'Please enter valid width and height.';
@@ -120,11 +148,41 @@
       let price = 0;
 
       if (projectType === 'banner') {
-        if (sqft < 5) {
+        const fixedSizes = {
+          '24x36': 40,
+          '36x24': 40,
+          '48x36': 60,
+          '36x48': 60,
+          '36x72': 90,
+          '72x36': 90,
+          '36x96': 115,
+          '96x36': 115,
+          '48x96': 128,
+          '96x48': 128,
+          '48x120': 160,
+          '120x48': 160
+        };
+
+        const key = `${Math.round(width)}x${Math.round(height)}`;
+        const altKey = `${Math.round(height)}x${Math.round(width)}`;
+
+        if (fixedSizes[key]) {
+          price = fixedSizes[key];
+        } else if (fixedSizes[altKey]) {
+          price = fixedSizes[altKey];
+        } else if (sqft < 5) {
           price = 35;
+        } else if (sqft <= 15) {
+          price = sqft * 4.5;
         } else {
-          price = sqft * 5;
+          price = sqft * 4;
         }
+
+        if (grommetNeeded === 'yes') {
+          if (grommetType === 'four') price += 5;
+          if (grommetType === 'around') price += 7;
+        }
+
       } else if (projectType === 'vinyl') {
         if (sqft < 3) {
           price = sqft * 10;
