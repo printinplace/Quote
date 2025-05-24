@@ -62,14 +62,14 @@
     <h2>Price Calculator</h2>
 
     <label for="project">Project Type</label>
-    <select id="project" onchange="toggleOptions()">
+    <select id="project" onchange="toggleOptions(); calculatePrice()">
       <option value="banner">Banner</option>
       <option value="vinyl">Vinyl</option>
     </select>
 
     <div id="grommet-options" style="display: none;">
       <label for="grommet">Grommet Needed?</label>
-      <select id="grommet" onchange="toggleGrommetDetail()">
+      <select id="grommet" onchange="toggleGrommetDetail(); calculatePrice()">
         <option value="no">No</option>
         <option value="yes">Yes</option>
       </select>
@@ -85,7 +85,7 @@
 
     <div id="lamination-options" style="display: none;">
       <label for="laminated">Laminated?</label>
-      <select id="laminated" onchange="toggleLaminationDetail()">
+      <select id="laminated" onchange="toggleLaminationDetail(); calculatePrice()">
         <option value="no">No</option>
         <option value="yes">Yes</option>
       </select>
