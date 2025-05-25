@@ -73,6 +73,7 @@
       <option value="flyer">Flyer</option>
       <option value="businesscard">Business Card</option>
       <option value="rollup">Roll-up Banner Stand</option>
+      <option value="poster">Poster</option>
     </select>
 
     <!-- Common options for banner and vinyl -->
@@ -101,7 +102,8 @@
       <div id="lamination-options" style="display: none;">
         <label for="laminated">Laminated?</label>
         <select id="laminated" onchange="toggleLaminationDetail();
-      document.getElementById('rollup-options').style.display = project === 'rollup' ? 'block' : 'none'; calculatePrice()">
+      document.getElementById('rollup-options').style.display = project === 'rollup' ? 'block' : 'none';
+      document.getElementById('poster-options').style.display = project === 'poster' ? 'block' : 'none'; calculatePrice()">
           <option value="no">No</option>
           <option value="yes">Yes</option>
         </select>
@@ -171,23 +173,54 @@
       <input type="number" id="rollupQty" min="1" placeholder="Enter quantity" oninput="calculatePrice()">
     </div>
 
+    
+    
+    
+    <!-- Poster-specific options -->
+    <div id="poster-options" style="display: none;">
+      <label for="posterSize">Poster Size</label>
+      <select id="posterSize" onchange="togglePosterSize(); calculatePrice()">
+        <option value="18x24">18&quot; x 24&quot;</option>
+        <option value="24x36">24&quot; x 36&quot;</option>
+        <option value="48x36">48&quot; x 36&quot;</option>
+        <option value="custom">Custom Size</option>
+      </select>
+
+      <div id="custom-poster-dimensions" style="display: none;">
+        <label for="posterWidth">Width (inches)</label>
+        <input type="number" id="posterWidth" step="0.01" placeholder="Enter width" oninput="calculatePrice()">
+
+        <label for="posterHeight">Height (inches)</label>
+        <input type="number" id="posterHeight" step="0.01" placeholder="Enter height" oninput="calculatePrice()">
+      </div>
+    </div>
+
     <div id="result"></div>
   </div>
 
   <script>
     function initOptions() {
+      togglePosterSize();
+      togglePosterSize();
       toggleOptions();
     }
+    
+    function togglePosterSize() {
+      const size = document.getElementById('posterSize').value;
+      document.getElementById('custom-poster-dimensions').style.display = size === 'custom' ? 'block' : 'none';
+    }
+
     function toggleOptions() {
       const project = document.getElementById('project').value;
       document.getElementById('flyer-options').style.display = project === 'flyer' ? 'block' : 'none';
-      document.getElementById('common-options').style.display = (project === 'flyer' || project === 'businesscard' || project === 'rollup') ? 'none' : 'block';
+      document.getElementById('common-options').style.display = (project === 'flyer' || project === 'businesscard' || project === 'rollup' || project === 'poster') ? 'none' : 'block';
       document.getElementById('grommet-options').style.display = project === 'banner' ? 'block' : 'none';
       document.getElementById('lamination-options').style.display = project === 'vinyl' ? 'block' : 'none';
       document.getElementById('businesscard-options').style.display = project === 'businesscard' ? 'block' : 'none';
       toggleGrommetDetail();
       toggleLaminationDetail();
       document.getElementById('rollup-options').style.display = project === 'rollup' ? 'block' : 'none';
+      document.getElementById('poster-options').style.display = project === 'poster' ? 'block' : 'none';
     }
     function toggleGrommetDetail() {
       const grommet = document.getElementById('grommet').value;
@@ -235,6 +268,37 @@
           price = pricing[side][qty];
           resultText = `Estimated Price: $${price.toFixed(2)}`;
         
+      
+      } else if (project === 'poster') {
+        const size = document.getElementById('posterSize').value;
+        let width, height;
+        if (size === 'custom') {
+          width = parseFloat(document.getElementById('posterWidth').value);
+          height = parseFloat(document.getElementById('posterHeight').value);
+          if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+            document.getElementById('result').textContent = 'Enter valid custom size dimensions.';
+            return;
+          }
+        } else {
+          const dimensions = {
+          "18x24": [18, 24],
+          "24x36": [0, 0],
+          "48x36": [48, 36]
+        };
+          if (size === "24x36") {
+          resultText = `Estimated Price: $28.25`;
+          document.getElementById("result").textContent = resultText;
+          return;
+        }
+        [width, height] = dimensions[size];
+        }
+        const sqft = (width * height) / 144;
+        let price = 0;
+        if (sqft < 5) price = 35 * 0.65;
+        else if (sqft <= 15) price = sqft * 4.5 * 0.65;
+        else price = sqft * 4 * 0.65;
+        resultText = `Estimated Price: $${price.toFixed(2)} (Area: ${sqft.toFixed(2)} sqft)`;
+
       } else if (project === 'rollup') {
         const qty = parseInt(document.getElementById('rollupQty').value);
         const price = qty * 165;
@@ -244,6 +308,37 @@
           resultText = 'Quantity pricing not defined.';
         }
       
+      
+      } else if (project === 'poster') {
+        const size = document.getElementById('posterSize').value;
+        let width, height;
+        if (size === 'custom') {
+          width = parseFloat(document.getElementById('posterWidth').value);
+          height = parseFloat(document.getElementById('posterHeight').value);
+          if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+            document.getElementById('result').textContent = 'Enter valid custom size dimensions.';
+            return;
+          }
+        } else {
+          const dimensions = {
+          "18x24": [18, 24],
+          "24x36": [0, 0],
+          "48x36": [48, 36]
+        };
+          if (size === "24x36") {
+          resultText = `Estimated Price: $28.25`;
+          document.getElementById("result").textContent = resultText;
+          return;
+        }
+        [width, height] = dimensions[size];
+        }
+        const sqft = (width * height) / 144;
+        let price = 0;
+        if (sqft < 5) price = 35 * 0.65;
+        else if (sqft <= 15) price = sqft * 4.5 * 0.65;
+        else price = sqft * 4 * 0.65;
+        resultText = `Estimated Price: $${price.toFixed(2)} (Area: ${sqft.toFixed(2)} sqft)`;
+
       } else if (project === 'rollup') {
         const qty = parseInt(document.getElementById('rollupQty').value);
         const price = qty * 165;
