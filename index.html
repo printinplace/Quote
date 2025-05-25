@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +71,8 @@
       <option value="banner">Banner</option>
       <option value="vinyl">Vinyl</option>
       <option value="flyer">Flyer</option>
+      <option value="businesscard">Business Card</option>
+      <option value="rollup">Roll-up Banner Stand</option>
     </select>
 
     <!-- Common options for banner and vinyl -->
@@ -99,7 +100,8 @@
 
       <div id="lamination-options" style="display: none;">
         <label for="laminated">Laminated?</label>
-        <select id="laminated" onchange="toggleLaminationDetail(); calculatePrice()">
+        <select id="laminated" onchange="toggleLaminationDetail();
+      document.getElementById('rollup-options').style.display = project === 'rollup' ? 'block' : 'none'; calculatePrice()">
           <option value="no">No</option>
           <option value="yes">Yes</option>
         </select>
@@ -137,6 +139,38 @@
       <input type="number" id="flyerQty" min="1" placeholder="Enter quantity" oninput="calculatePrice()">
     </div>
 
+    <!-- Business Card-specific options -->
+    <div id="businesscard-options" style="display: none;">
+      <label for="bcSide">Print Side</label>
+      <select id="bcSide" onchange="calculatePrice()">
+        <option value="one">One Side</option>
+        <option value="double">Double Side</option>
+      </select>
+
+      <label for="bcQty">Quantity</label>
+      <select id="bcQty" onchange="calculatePrice()">
+        <option value="100">100</option>
+        <option value="250">250</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+      </select>
+
+      <label for="bcStock">Paper Stock</label>
+      <select id="bcStock" onchange="calculatePrice()">
+        <option value="glossy">Glossy</option>
+        <option value="matte">Matte</option>
+      </select>
+    </div>
+
+    
+    <!-- Roll-up Banner-specific options -->
+    <div id="rollup-options" style="display: none;">
+      <p>Size: 33.5 x 79"</p>
+
+      <label for="rollupQty">Quantity</label>
+      <input type="number" id="rollupQty" min="1" placeholder="Enter quantity" oninput="calculatePrice()">
+    </div>
+
     <div id="result"></div>
   </div>
 
@@ -147,11 +181,13 @@
     function toggleOptions() {
       const project = document.getElementById('project').value;
       document.getElementById('flyer-options').style.display = project === 'flyer' ? 'block' : 'none';
-      document.getElementById('common-options').style.display = project === 'flyer' ? 'none' : 'block';
+      document.getElementById('common-options').style.display = (project === 'flyer' || project === 'businesscard' || project === 'rollup') ? 'none' : 'block';
       document.getElementById('grommet-options').style.display = project === 'banner' ? 'block' : 'none';
       document.getElementById('lamination-options').style.display = project === 'vinyl' ? 'block' : 'none';
+      document.getElementById('businesscard-options').style.display = project === 'businesscard' ? 'block' : 'none';
       toggleGrommetDetail();
       toggleLaminationDetail();
+      document.getElementById('rollup-options').style.display = project === 'rollup' ? 'block' : 'none';
     }
     function toggleGrommetDetail() {
       const grommet = document.getElementById('grommet').value;
@@ -187,6 +223,32 @@
         else if (size === '11x17') multiplier = 1.4;
         const finalPrice = qty * basePricePerPiece * multiplier;
         resultText = `Estimated Price: $${finalPrice.toFixed(2)}`;
+      } else if (project === 'businesscard') {
+        const side = document.getElementById('bcSide').value;
+        const qty = parseInt(document.getElementById('bcQty').value);
+        let price = 0;
+        const pricing = {
+          one: { 100: 25, 250: 35, 500: 55, 1000: 65 },
+          double: { 100: 30, 250: 40, 500: 60, 1000: 70 }
+        };
+        if (pricing[side] && pricing[side][qty]) {
+          price = pricing[side][qty];
+          resultText = `Estimated Price: $${price.toFixed(2)}`;
+        
+      } else if (project === 'rollup') {
+        const qty = parseInt(document.getElementById('rollupQty').value);
+        const price = qty * 165;
+        resultText = `Estimated Price: $${price.toFixed(2)} (Size: 33.5 x 79")`;
+
+      } else {
+          resultText = 'Quantity pricing not defined.';
+        }
+      
+      } else if (project === 'rollup') {
+        const qty = parseInt(document.getElementById('rollupQty').value);
+        const price = qty * 165;
+        resultText = `Estimated Price: $${price.toFixed(2)} (Size: 33.5 x 79")`;
+
       } else {
         const width = parseFloat(document.getElementById('width').value);
         const height = parseFloat(document.getElementById('height').value);
