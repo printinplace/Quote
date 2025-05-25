@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,17 +66,22 @@
   <div class="container">
     <img src="logo.png" alt="Logo" class="logo">
     <h2>Price Calculator</h2>
+
     <label for="project">Project Type</label>
     <select id="project" onchange="toggleOptions(); calculatePrice()">
       <option value="banner">Banner</option>
       <option value="vinyl">Vinyl</option>
       <option value="flyer">Flyer</option>
     </select>
+
+    <!-- Common options for banner and vinyl -->
     <div id="common-options">
       <label for="width">Width (inches)</label>
-      <input type="number" id="width" step="0.01" placeholder="Enter width">
+      <input type="number" id="width" step="0.01" placeholder="Enter width" oninput="calculatePrice()">
+
       <label for="height">Height (inches)</label>
-      <input type="number" id="height" step="0.01" placeholder="Enter height">
+      <input type="number" id="height" step="0.01" placeholder="Enter height" oninput="calculatePrice()">
+
       <div id="grommet-options" style="display: none;">
         <label for="grommet">Grommet Needed?</label>
         <select id="grommet" onchange="toggleGrommetDetail(); calculatePrice()">
@@ -90,6 +96,7 @@
           </select>
         </div>
       </div>
+
       <div id="lamination-options" style="display: none;">
         <label for="laminated">Laminated?</label>
         <select id="laminated" onchange="toggleLaminationDetail(); calculatePrice()">
@@ -105,6 +112,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Flyer-specific options -->
     <div id="flyer-options" style="display: none;">
       <label for="flyerSize">Flyer Size</label>
       <select id="flyerSize" onchange="calculatePrice()">
@@ -112,20 +121,25 @@
         <option value="8.5x5.5">8.5" x 5.5"</option>
         <option value="11x17">11" x 17"</option>
       </select>
+
       <label for="flyerPaper">Paper Type</label>
       <select id="flyerPaper" onchange="calculatePrice()">
         <option value="100lbGlossy">100lb Glossy</option>
       </select>
+
       <label for="flyerSide">Print Side</label>
       <select id="flyerSide" onchange="calculatePrice()">
         <option value="one">One Side</option>
         <option value="double">Double Side</option>
       </select>
+
       <label for="flyerQty">Quantity</label>
       <input type="number" id="flyerQty" min="1" placeholder="Enter quantity" oninput="calculatePrice()">
     </div>
+
     <div id="result"></div>
   </div>
+
   <script>
     function initOptions() {
       toggleOptions();
