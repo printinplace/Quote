@@ -184,12 +184,21 @@
         <option value="36x48">36&quot; x 48&quot;</option>
         <option value="48x48">48&quot; x 48&quot;</option>
         <option value="48x96">48&quot; x 96&quot;</option>
+<option value="custom">Custom Size</option>
       </select>
 
       <label for="coroplastQty">Quantity</label>
       <input type="number" id="coroplastQty" min="1" placeholder="Enter quantity" oninput="calculatePrice()">
 
-      <label for="coroplastSide">Print Side</label>
+      
+<div id="coroplastCustomSize" style="display: none;">
+  <label for="customWidth">Width (inches)</label>
+  <input type="number" id="customWidth" step="0.01" placeholder="Enter width" oninput="calculatePrice()">
+  <label for="customHeight">Height (inches)</label>
+  <input type="number" id="customHeight" step="0.01" placeholder="Enter height" oninput="calculatePrice()">
+</div>
+
+<label for="coroplastSide">Print Side</label>
       <select id="coroplastSide" onchange="calculatePrice()">
         <option value="single">Single Sided</option>
         <option value="double">Double Sided</option>
@@ -206,7 +215,13 @@
   <script>
     function initOptions() {
       toggleOptions();
-    }function toggleOptions() {
+    }
+document.getElementById('coroplastSize').addEventListener('change', function () {
+  const isCustom = this.value === 'custom';
+  document.getElementById('coroplastCustomSize').style.display = isCustom ? 'block' : 'none';
+});
+
+function toggleOptions() {
       const project = document.getElementById('project').value;
       document.getElementById('flyer-options').style.display = project === 'flyer' ? 'block' : 'none';
       document.getElementById('common-options').style.display = (project === 'flyer' || project === 'businesscard' || project === 'rollup' || project === 'poster' || project === 'coroplast') ? 'none' : 'block';
@@ -278,7 +293,25 @@ else if (project === 'coroplast') {
 
         let unitPrice = 0;
 
-        if (size === '48x48' || size === '48x96') {
+        
+if (size === 'custom') {
+  const width = parseFloat(document.getElementById('customWidth').value);
+  const height = parseFloat(document.getElementById('customHeight').value);
+  if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+    document.getElementById('result').textContent = 'Enter valid width and height.';
+    return;
+  }
+  const sqft = (width * height) / 144;
+  let unitPrice = sqft * 8;
+  if (side === 'single') unitPrice *= 0.85;
+  if (hStake) unitPrice += 1.25;
+  const totalPrice = unitPrice * qty;
+  resultText = `Estimated Price: $${totalPrice.toFixed(2)} (${qty} pcs @ $${unitPrice.toFixed(2)} each - ${sqft.toFixed(2)} sqft each)`;
+  document.getElementById('result').textContent = resultText;
+  return;
+}
+
+if (size === '48x48' || size === '48x96') {
           if (qty > 10) {
             document.getElementById('result').textContent = 'Max quantity for this size is 10.';
             return;
@@ -330,7 +363,25 @@ else if (project === 'coroplast') {
 
         let unitPrice = 0;
 
-        if (size === '48x48' || size === '48x96') {
+        
+if (size === 'custom') {
+  const width = parseFloat(document.getElementById('customWidth').value);
+  const height = parseFloat(document.getElementById('customHeight').value);
+  if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+    document.getElementById('result').textContent = 'Enter valid width and height.';
+    return;
+  }
+  const sqft = (width * height) / 144;
+  let unitPrice = sqft * 8;
+  if (side === 'single') unitPrice *= 0.85;
+  if (hStake) unitPrice += 1.25;
+  const totalPrice = unitPrice * qty;
+  resultText = `Estimated Price: $${totalPrice.toFixed(2)} (${qty} pcs @ $${unitPrice.toFixed(2)} each - ${sqft.toFixed(2)} sqft each)`;
+  document.getElementById('result').textContent = resultText;
+  return;
+}
+
+if (size === '48x48' || size === '48x96') {
           if (qty > 10) {
             document.getElementById('result').textContent = 'Max quantity for this size is 10.';
             return;
